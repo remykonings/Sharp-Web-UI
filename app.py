@@ -2,6 +2,7 @@ import gradio as gr
 import os
 import sharp_runner
 import zipfile
+from urllib.parse import quote, urlencode
 
 # Configuration
 ASSETS_DIR = os.path.join(os.getcwd(), "assets")
@@ -26,7 +27,10 @@ def load_selected_model(ply_path):
     viewer_abs_path = viewer_abs_path.replace("\\", "/")
     web_ply_path = ply_path.replace("\\", "/") 
     
-    iframe_src = f"/file={viewer_abs_path}?url=/file={web_ply_path}"
+    # Gradio 5+ serves local files under /gradio_api/file=
+    viewer_file_url = f"/gradio_api/file={quote(viewer_abs_path)}"
+    ply_file_url = f"/gradio_api/file={quote(web_ply_path)}"
+    iframe_src = f"{viewer_file_url}?{urlencode({'url': ply_file_url})}"
     
     viewer_html = f"""
     <iframe 

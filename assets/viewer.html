@@ -60,14 +60,17 @@
                 const viewer = new Viewer({
                     'cameraUp': [0, -1, 0],
                     'initialCameraPosition': [0, 0, 5],
+                    'initialCameraLookAt': [0, 0, 0],
                     'gpuAcceleratedSort': false,     
                     'sharedMemoryForWorkers': false,
-                    'sphericalHarmonicsDegree': 0 
+                    'sphericalHarmonicsDegree': 0,
+                    'antialiased': true,
+                    'splatScale': 1.15
                 });
 
                 // Load the model using our fake URL
                 return viewer.addSplatScene(fakeUrl, {
-                    'splatAlphaRemovalThreshold': 5,
+                    'splatAlphaRemovalThreshold': 1,
                     'showLoadingUI': true,
                     'streamView': false
                 })
@@ -75,10 +78,6 @@
                     log("Success! Rendering.");
                     // Hide the log after a second so we can see the model
                     setTimeout(() => { logDiv.style.display = 'none'; }, 1000);
-
-                    viewer.camera.position.set(0, 0, -1);
-                    
-                    viewer.camera.lookAt(0, 5, 0);
                     
                     viewer.start();
                     
