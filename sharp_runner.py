@@ -1,6 +1,7 @@
 import subprocess
 import os
 import shutil
+import sys
 
 # --- CONFIGURATION ---
 OUTPUT_DIR = os.path.join(os.getcwd(), "generated_splats")
@@ -8,6 +9,27 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # How many generation folders to keep before deleting the oldest ones
 MAX_GENERATIONS = 50 
+
+
+def resolve_sharp_executable():
+    """
+    Resolves the SHARP CLI executable in environments where PATH may not be
+    initialized (e.g. app launched from Finder).
+    """
+    sharp_from_env = os.environ.get("SHARP_EXECUTABLE")
+    if sharp_from_env:
+        return sharp_from_env
+
+    in_path = shutil.which("sharp")
+    if in_path:
+        return in_path
+
+    # If launched with a venv Python binary, try sibling "sharp" script.
+    sibling_sharp = os.path.join(os.path.dirname(sys.executable), "sharp")
+    if os.path.exists(sibling_sharp):
+        return sibling_sharp
+
+    return "sharp"
 
 def cleanup_old_generations():
     """
@@ -60,7 +82,7 @@ def run_sharp_generation(input_image_path):
 
     # 2. Build the Command
     command = [
-        "sharp", "predict",
+        resolve_sharp_executable(), "predict",
         "-i", input_image_path,
         "-o", job_dir
     ]
@@ -91,6 +113,12 @@ def run_sharp_generation(input_image_path):
         error_msg = f"Error running SHARP:\n{e.stderr}"
         print(error_msg)
         return None, error_msg
+
+    except FileNotFoundError:
+        return None, (
+            "Error: SHARP CLI was not found. Ensure ml-sharp is installed in the "
+            "same Python environment, or set SHARP_EXECUTABLE to the full path."
+        )
         
     except Exception as e:
         return None, f"System Error: {str(e)}"

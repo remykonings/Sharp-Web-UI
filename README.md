@@ -43,6 +43,39 @@ Once you have Apple SHARP installed and working:
 
 **Tested on Linux**
 
+### macOS Desktop App (Double-Click)
+If you want to run this like a desktop app from Finder/Desktop:
+
+1. Make sure your Python env is already set up and working with SHARP + this UI.
+2. Run:
+   ```bash
+   cd /path/to/Sharp-Web-UI
+   ./build_macos_app.sh
+   ```
+3. This creates `~/Desktop/Sharp Web UI.app`.
+4. Double-click the app to launch the server and open `http://127.0.0.1:7880`.
+
+If your Python binary is not in the default path, set it explicitly:
+```bash
+SHARP_WEBUI_PYTHON_BIN=/absolute/path/to/python ./build_macos_app.sh
+```
+
+### macOS Native App (No Browser)
+To run SHARP UI inside a native macOS window (embedded WebKit, no external browser):
+
+1. Build the native app bundle:
+   ```bash
+   cd /path/to/Sharp-Web-UI
+   ./build_native_macos_app.sh
+   ```
+2. This creates `~/Desktop/Sharp Web UI Native.app`.
+3. Double-click it from Finder/Desktop.
+
+If your Python binary is at a custom path:
+```bash
+SHARP_WEBUI_PYTHON_BIN=/absolute/path/to/python ./build_native_macos_app.sh
+```
+
 ### Folder Organization
 To keep things clean, here is how you should organize your files:
 * **Root Folder:** Keep `app.py`, `sharp_runner.py`, and `requirements.txt` here.
